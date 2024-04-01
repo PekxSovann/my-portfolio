@@ -1,11 +1,32 @@
-import React from "react";
+"use client"
+import React, { useState } from "react";
+import { Resend } from 'resend';
 import Link from "next/link";
 import Image from "next/image";
 
 import GithubIcon from "../../../public/images/socials/github.svg";
 import LinkedinIcon from "../../../public/images/socials/LinkedIn_icon.svg";
+import { sendMail } from "../api/send/route";
 
 const EmailSection = () => {
+  const [emailSubmitted, setEmailSubmitted] = useState(0);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const data = {
+      email: e.target.email.value,
+      subject: e.target.subject.value,
+      message: e.target.message.value,
+    }
+    try {
+      const response = await sendMail(data);
+      if (response === 1)
+        setEmailSubmitted(1);
+    } catch (e) {
+      setEmailSubmitted(2);
+    }
+  }
+
   return (
     <section className="grid md:grid-cols-2 my-12 py-4 gap-4">
       <div>
@@ -32,12 +53,13 @@ const EmailSection = () => {
       </div>
 
       <div>
-        <form className="flex flex-col gap-6">
+        <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
           <div className="mb-5">
             <label htmlFor="email" className="text-white mb-2 block text-sm font-medium">
               Your email
             </label>
             <input
+              name="email"
               type="email"
               id="email"
               required
@@ -51,6 +73,7 @@ const EmailSection = () => {
               Your subject
             </label>
             <input
+              name="subject"
               type="subject"
               id="subject"
               required
@@ -77,6 +100,20 @@ const EmailSection = () => {
           >
             Send message!
           </button>
+          {
+            emailSubmitted === 1 && (
+              <p className="text-green-500 text-sm mt-2">
+                Email sent successfully!
+              </p>
+            )
+          }
+          {
+            emailSubmitted === 2 && (
+              <p className="text-red-500 text-sm mt-2">
+                There was a problem while sending your mail!
+              </p>
+            )
+          }
         </form>
       </div>
     </section>
