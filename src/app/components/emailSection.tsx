@@ -1,12 +1,11 @@
 "use client"
 import React, { useState } from "react";
-import { Resend } from 'resend';
+import axios from "axios";
 import Link from "next/link";
 import Image from "next/image";
 
 import GithubIcon from "../../../public/images/socials/github.svg";
 import LinkedinIcon from "../../../public/images/socials/LinkedIn_icon.svg";
-import { sendMail } from "../api/send/route";
 
 const EmailSection = () => {
   const [emailSubmitted, setEmailSubmitted] = useState(0);
@@ -19,8 +18,17 @@ const EmailSection = () => {
       message: e.target.message.value,
     }
     try {
-      const response = await sendMail(data);
-      if (response === 1)
+      const rep = await axios.post('api/send', {
+        headers:  {
+          "Content-Type": "application/json",
+        },
+        param: {
+          data
+        },
+      })
+      console.log(rep);
+      // const response = await sendMail(data);
+      if (rep.status === 200)
         setEmailSubmitted(1);
     } catch (e) {
       setEmailSubmitted(2);

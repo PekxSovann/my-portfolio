@@ -1,17 +1,14 @@
 import { Resend } from 'resend';
+import { NextRequest, NextResponse } from "next/server";
 
 import { EmailTemplate } from '../../components/email-template';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const fromEmail = process.env.FROM_EMAIL;
+const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
+const fromEmail = process.env.NEXT_PUBLIC_FROM_EMAIL;
 
-interface EmailData {
-  email: string;
-  subject: string;
-  message: string;
-};
+export async function POST(req: NextRequest) {
+  const data = req.body;
 
-export const sendMail = async (data: EmailData) => {
   try {
     const response = await resend.emails.send({
       from: fromEmail,
@@ -19,12 +16,9 @@ export const sendMail = async (data: EmailData) => {
       subject: data.subject,
       react: EmailTemplate({ message: data.message })
     });
-    // const response = await fetch(endpoint, options);
-    console.log("RES DATA:", response);
-    // const resData = await response;
-    // console.log("RES DATA:", resData);
-    return 1
-  } catch (e) {
-    return 2;
+
+    return Response.json(data);
+  } catch (error) {
+    return Response.json({ error });
   }
 }
