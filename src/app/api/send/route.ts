@@ -4,9 +4,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { EmailTemplate } from '../../components/email-template';
 
 const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
-const fromEmail = process.env.NEXT_PUBLIC_FROM_EMAIL;
+const fromEmail = process.env.NEXT_PUBLIC_FROM_EMAIL || "contact@dangt.dev";
 
-export async function POST(req: NextRequest) {
+interface POST_FUCTION extends NextRequest {
+  req: {
+    body: {
+      email: string;
+      subject: string;
+      message: string;
+    }
+  }
+}
+
+export async function POST(req: POST_FUCTION) {
   const data = req.body;
 
   try {
