@@ -13,9 +13,9 @@ const EmailSection = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = {
-      email: e.target.email.value,
-      subject: e.target.subject.value,
-      message: e.target.message.value,
+      email: e.currentTarget.email.value,
+      subject: e.currentTarget.subject.value,
+      message: e.currentTarget.message.value,
     }
     try {
       const rep = await axios.post('api/send', {
